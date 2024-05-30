@@ -68,11 +68,18 @@ class Algorithm::KDimensionalTree {
         }
     }
 
-    multi method nearest(@point, UInt $k = 1) {
+    multi method nearest(@point, UInt:D $k = 1) {
         self.k-nearest-rec(%!tree, @point, $k, 0).map(*<point>);
     }
 
-    multi method nearest(@point, ($k, Numeric $r)) {
+    multi method nearest(@point, Whatever) {
+        self.nearest(@point, 1);
+    }
+
+    multi method nearest(@point, ($k, $r)) {
+        if $r.isa(Whatever) {
+            return self.nearest(@point, $k);
+        }
         my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
         return do given $k {
             when Whatever { @res.map(*<point>) }
