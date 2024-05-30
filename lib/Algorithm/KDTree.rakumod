@@ -67,7 +67,7 @@ class Algorithm::KDTree {
     method build-tree-rec(@points, $depth) {
         return %() if @points.elems == 0;
         my $axis = $depth % @points[0].elems;
-        @points.sort: { $^a[$axis] < $^b[$axis] };
+        @points = @points.sort({ $_[$axis] });
         my $median = @points.elems div 2;
         return {
             point => @points[$median],
@@ -79,20 +79,37 @@ class Algorithm::KDTree {
     #======================================================
     # K-nearest
     #======================================================
-    method k-nearest-rec(%node, @point, $k, $depth) {
+    method k-nearest-rec(%node, @point, $k, UInt $depth) {
         return [] unless %node;;
         my $axis = $depth % @point.elems;
-        my %next = @point[$axis] < %node<point>[$axis] ?? %node<left> !! %node<right>;
-        my %other = @point[$axis] < %node<point>[$axis] ?? %node<right> !! %node<left>;
+
+        my (%next, %other);
+        if @point[$axis] < %node<point>[$axis] {
+            %next = %node<left>; %other = %node<right>;
+        } else {
+            %next = %node<right>; %other = %node<left>;
+        }
+
+        # Recursively search
         my @best = self.k-nearest-rec(%next, @point, $k, $depth + 1);
         @best.push( { point => %node<point>, distance => self.distance-function.(@point, %node<point>) });
-        @best = @best.sort: { $^a<distance> };
+
+        # Reorder best neighbors
+        @best = @best.sort({ $_<distance> });
         @best = @best[^$k] if @best.elems > $k;
-        if @best.elems < $k || (abs(@point[$axis] - %node<point>[$axis]) < @best.tail<distance>) {
+
+        # Recursively search if viable candidates _might_ exist
+#        note "pivot : ", %node<point>, ", axis : ", $axis;
+#        note (abs(@point[$axis] - %node<point>[$axis]) < @best.tail<distance>);
+#        note "abs   : ", abs(@point[$axis] - %node<point>[$axis]), " < ", @best.tail<distance>;
+#        note "dist  : ", self.distance-function.(@point, %node<point>), " < ", @best.tail<distance>;
+        if @best.elems < $k || (abs(@point[$axis] - %node<point>[$axis]) ≤ @best.tail<distance>) {
             @best.append: self.k-nearest-rec(%other, @point, $k, $depth + 1);
-            @best = @best.sort: { $^a<distance> };
+            @best = @best.sort({ $_<distance> });
             @best = @best[^$k] if @best.elems > $k;
+#            note 'loop :', (@best);
         }
+#        note 'end  :', (@best);
         return @best;
     }
 
