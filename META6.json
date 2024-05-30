@@ -1,0 +1,29 @@
+{
+  "raku": "6.d",
+  "name": "Algorithm::KDTree",
+  "api": "0",
+  "auth": "zef:antononcube",
+  "version": "0.0.1",
+  "description": "K-Dimensional Tree (KDTree) algorithm implementations.",
+  "authors": [
+    "Anton Antonov"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Algorithm::KDTree": "lib/Algorithm/KDTree.rakumod",
+    "Algorithm::NodalKDTree": "lib/Algorithm/NodalKDTree.rakumod"
+  },
+  "depends": [
+  ],
+  "build-depends": [],
+  "test-depends": [],
+  "resources": [
+  ],
+  "tags": [
+    "k-d tree",
+    "k-dimensional tree",
+    "spatial search",
+    "nearest"
+  ],
+  "source-url": "https://github.com/antononcube/Raku-Algorithm-KDTree.git"
+}
