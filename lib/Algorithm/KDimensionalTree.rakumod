@@ -1,44 +1,52 @@
 use v6.d;
 
-class Algorithm::KDimensionalTree {
+use Math::DistanceFunctions;
+
+class Algorithm::KDimensionalTree
+        does Math::DistanceFunctionish {
     has @.points;
     has %.tree;
     has $.distance-function;
+    has $!distance-function-name = '';
 
     #======================================================
     # Creators
     #======================================================
-    submethod BUILD(:@points, :$distance-function = &euclidean) {
+    submethod BUILD(:@points, :$distance-function = &euclidean-distance) {
         @!points = @points;
         given $distance-function {
             when Whatever {
-                $!distance-function = &euclidean
+                $!distance-function = &euclidean-distance;
+                $!distance-function-name = 'euclidean-distance';
             }
 
             when $_ ~~ Str:D && $_.lc ∈ <euclidean euclideandistance euclidean-distance> {
-                $!distance-function = &euclidean
+                $!distance-function = &euclidean-distance;
+                $!distance-function-name = 'euclidean-distance';
             }
 
             when $_ ~~ Str:D && $_.lc ∈ <cosine cosinedistance cosine-distance> {
-                $!distance-function = &cosine
+                $!distance-function = &cosine-distance;
+                $!distance-function-name = 'cosine-distance';
             }
 
             when $_ ~~ Callable {
-                $!distance-function = $distance-function
+                $!distance-function = $distance-function;
             }
             default {
                 note "Do not know how to process the distance function spec.";
-                $!distance-function = &euclidean
+                $!distance-function = &euclidean-distance;
+                $!distance-function-name = 'euclidean-distance';
             }
         }
         self.build-tree();
     }
 
-    multi method new(:@points, :$distance-function = &euclidean) {
+    multi method new(:@points, :$distance-function = &euclidean-distance) {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, $distance-function = &euclidean) {
+    multi method new(@points, $distance-function = &euclidean-distance) {
         self.bless(:@points, :$distance-function);
     }
 
@@ -47,7 +55,7 @@ class Algorithm::KDimensionalTree {
     #======================================================
     method gist(){
         my $func-id = do given $!distance-function {
-#            when $_ ~~ &euclidean() { "Euclidean" }
+#            when $_ ~~ &euclidean-distance() { "Euclidean" }
 #            when $_ ~~ &cosine() { "Cosine" }
             default { "Unknown" }
         }
@@ -195,23 +203,6 @@ class Algorithm::KDimensionalTree {
 
         # Result
         return @neighbors;
-    }
-
-    #======================================================
-    # Distance functions
-    #======================================================
-    sub euclidean(@a, @b) {
-        sqrt [+] (@a Z- @b).map(* ** 2);
-    }
-
-    sub cosine(@a, @b) {
-        my $na = @a.map(* ** 2).sum.sqrt;
-        my $nb = @b.map(* ** 2).sum.sqrt;
-        if $na > 0 && $nb > 0 {
-            1 - (@a Z* @b).sum / $na / $nb
-        } else {
-            1
-        }
     }
 }
 

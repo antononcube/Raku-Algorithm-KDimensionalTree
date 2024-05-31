@@ -5,10 +5,8 @@ use lib <. lib>;
 
 use Algorithm::KDimensionalTree;
 use Data::TypeSystem;
-use ML::Clustering::DistanceFunctions;
+use Math::DistanceFunctions;
 use Text::Plot;
-
-my $df = {} but ML::Clustering::DistanceFunctions;
 
 my @points = ([(^100).rand, (^100).rand] xx 100).unique;
 
@@ -34,7 +32,7 @@ say "Computation time: {$tend - $tstart}";
 
 say (:@res);
 say 'elems => ', @res.elems;
-say "Contains the search point: {[||]  @res.map({ $df.euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
+say "Contains the search point: {[||]  @res.map({ euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
 
 my @point-char =  <* ⏺ ▲>;
 say <data nns search> Z=> @point-char;
@@ -60,7 +58,7 @@ say "Computation time: {$tend2 - $tstart2}";
 
 say (:@res2);
 say 'elems => ', @res2.elems;
-say "Contains the search point: {[||]  @res2.map({ $df.euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
+say "Contains the search point: {[||]  @res2.map({ euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
 
 say <data nns search> Z=> @point-char;
 say text-list-plot(

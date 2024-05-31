@@ -1,12 +1,14 @@
 {
   "name": "Algorithm::KDimensionalTree",
   "description": "K-dimensional Tree (K-d tree) algorithm implementations.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "authors": [
     "Anton Antonov"
   ],
   "auth": "zef:antononcube",
-  "depends": [],
+  "depends": [
+    "Math::DistanceFunctions:ver<0.1.0+>"
+  ],
   "build-depends": [],
   "test-depends": [],
   "provides": {

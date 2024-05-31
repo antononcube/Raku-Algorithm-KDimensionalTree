@@ -7,7 +7,7 @@ use Algorithm::KDimensionalTree;
 
 plan *;
 
-my @points = ([(^100).rand, (^100).rand]>>.round xx 100).unique;
+my @points = ([(^100).rand, (^100).rand] xx 100).unique;
 
 ## 1
 my $kdTree1;
@@ -29,5 +29,7 @@ is-deeply $kdTree1.nearest(@searchPoint1, 5).sort, $kdTree1.nearest(@searchPoint
 
 ## 6
 # Make verification test with direct scanning of @points.
+my @nns6 = @points.sort({ sqrt [+] ($_.Array Z- @searchPoint1).map(* ** 2) });
+is-deeply $kdTree1.nearest(@searchPoint1, 12), @nns6[^12];
 
 done-testing;
