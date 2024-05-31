@@ -116,13 +116,13 @@ class Algorithm::KDimensionalTree {
         self.nearest-within-ball-rec(%!tree, @point, $r, 0).map(*<point>);
     }
 
+    #======================================================
+    # Build the tree
+    #======================================================
     method build-tree() {
         %!tree = self.build-tree-rec(@!points, 0);
     }
 
-    #======================================================
-    # Build the tree
-    #======================================================
     method build-tree-rec(@points, $depth) {
         return %() if @points.elems == 0;
         my $axis = $depth % @points[0].elems;
