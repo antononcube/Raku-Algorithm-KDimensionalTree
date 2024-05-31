@@ -10,7 +10,27 @@ class Algorithm::KDimensionalTree {
     #======================================================
     submethod BUILD(:@points, :$distance-function = &euclidean) {
         @!points = @points;
-        $!distance-function = $distance-function;
+        given $distance-function {
+            when Whatever {
+                $!distance-function = &euclidean
+            }
+
+            when $_ ~~ Str:D && $_.lc ∈ <euclidean euclideandistance euclidean-distance> {
+                $!distance-function = &euclidean
+            }
+
+            when $_ ~~ Str:D && $_.lc ∈ <cosine cosinedistance cosine-distance> {
+                $!distance-function = &cosine
+            }
+
+            when $_ ~~ Callable {
+                $!distance-function = $distance-function
+            }
+            default {
+                note "Do not know how to process the distance function spec.";
+                $!distance-function = &euclidean
+            }
+        }
         self.build-tree();
     }
 
