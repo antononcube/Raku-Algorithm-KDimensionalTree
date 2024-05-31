@@ -1,0 +1,33 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+
+use Algorithm::KDimensionalTree;
+
+plan *;
+
+my @points = ([(^100).rand, (^100).rand]>>.round xx 100).unique;
+
+## 1
+my $kdTree1;
+$kdTree1 = Algorithm::KDimensionalTree.new(@points);
+isa-ok $kdTree1, Algorithm::KDimensionalTree:D;
+
+## 2
+my @searchPoint1 = |@points.head;
+is-deeply $kdTree1.nearest(@searchPoint1).Array, [@searchPoint1,];
+
+## 3
+is-deeply $kdTree1.nearest-within-ball(@searchPoint1, 12), $kdTree1.nearest(@searchPoint1, (Whatever, 12));
+
+## 4
+is-deeply $kdTree1.nearest(@searchPoint1, 3), $kdTree1.nearest(@searchPoint1, (3, Whatever));
+
+## 5
+is-deeply $kdTree1.nearest(@searchPoint1, 5).sort, $kdTree1.nearest(@searchPoint1, (5, 60)).sort;
+
+## 6
+# Make verification test with direct scanning of @points.
+
+done-testing;
