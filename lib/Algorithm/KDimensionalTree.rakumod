@@ -8,7 +8,7 @@ class Algorithm::KDimensionalTree
     has @.points;
     has %.tree;
     has $.distance-function;
-    has @!labels;
+    has @.labels;
 
     #======================================================
     # Creators
