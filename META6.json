@@ -15,7 +15,10 @@
     "Algorithm::KDimensionalTree": "lib/Algorithm/KDimensionalTree.rakumod",
     "Algorithm::NodalKDTree": "lib/Algorithm/NodalKDTree.rakumod"
   },
-  "resources": [],
+  "resources": [
+    "KDTreeTest.json",
+    "DeriveTestData.wl"
+  ],
   "license": "Artistic-2.0",
   "tags": [
     "k-d tree",
