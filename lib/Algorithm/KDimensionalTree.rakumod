@@ -102,7 +102,7 @@ class Algorithm::KDimensionalTree
         return self.nearest(@point, :$count, :$radius, :$prop, :$keys);
     }
 
-    multi method nearest(@point, :c(:$count) = 1, :r(:$radius) = Whatever, :p(:$prop) is copy = Whatever, Bool :$keys is copy = False) {
+    multi method nearest(@point, :c(:$count) = Whatever, :r(:$radius) = Whatever, :p(:$prop) is copy = Whatever, Bool :$keys is copy = False) {
 
         # Process properties
         my @knownProperties = <distance index label point>;
@@ -116,6 +116,9 @@ class Algorithm::KDimensionalTree
 
         # Compute
         my @res = do given ($count, $radius) {
+            when ( $_.head.isa(Whatever) && $.tail.isa(Whatever)) {
+                self.k-nearest-rec(%!tree, @point, 1, 0);
+            }
             when ( $_.head ~~ UInt:D && $_.tail.isa(Whatever) ) {
                 self.k-nearest-rec(%!tree, @point, $count, 0);
             }
