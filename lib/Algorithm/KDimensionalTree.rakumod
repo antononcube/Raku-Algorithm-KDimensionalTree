@@ -8,6 +8,7 @@ class Algorithm::KDimensionalTree
     has @.points;
     has %.tree;
     has $.distance-function;
+    has @!labels;
 
     #======================================================
     # Creators
@@ -34,6 +35,18 @@ class Algorithm::KDimensionalTree
                 die "Do not know how to process the distance function spec.";
             }
         }
+
+        # Process points
+        # If an array of arrays make it an array of pars
+        if @!points.all ~~ Positional:D {
+            @!points = @!points.pairs;
+        } elsif @!points.all ~~ Map:D {
+            @!labels = @!points>>.key;
+            @!points = @!points>>.value.pairs;
+        } else {
+            die "The points argument is expected to be an array of arrays or an array of hashes.";
+        }
+
         self.build-tree();
     }
 
@@ -63,59 +76,111 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Insert
     #======================================================
-    method insert(@point) {
-        @!points.push(@point);
+    multi method insert(@point) {
+        my $new = Pair.new( @!points.elems, @point);
+        @!points.push($new);
+        self.build-tree();
+    }
+
+    multi method insert(Pair:D $new) {
+        @!points.push($new);
         self.build-tree();
     }
 
     #======================================================
     # Top-level methods
     #======================================================
-    multi method nearest(@point, :n(:$count) = 1, :r($radius) = Whatever) {
-        return do given ($count, $radius) {
+    multi method nearest(@point, UInt:D $count, :p(:$prop) = Whatever, Bool :$keys = False) {
+        return self.nearest(@point, :$count, :$prop, :$keys);
+    }
+
+    multi method nearest(@point, Whatever, :p(:$prop) = Whatever, Bool :$keys = False) {
+        return self.nearest(@point, count => 1, :$prop, :$keys);
+    }
+
+    multi method nearest(@point, ($count, $radius), :p(:$prop) = Whatever, Bool :$keys = False) {
+        return self.nearest(@point, :$count, :$radius, :$prop, :$keys);
+    }
+
+    multi method nearest(@point, :c(:$count) = 1, :r(:$radius) = Whatever, :p(:$prop) is copy = Whatever, Bool :$keys is copy = False) {
+
+        # Process properties
+        my @knownProperties = <distance index label point>;
+
+        if $prop.isa(Whatever) { $prop = <point>; }
+        if $prop ~~ Str:D && $prop.lc eq 'all'  { $prop = @knownProperties; $keys = True; }
+        if $prop ~~ Str:D { $prop = [$prop, ]; }
+
+        die "The value of the argument property is expected to be Whatever or one of '{@knownProperties.join(',')}'."
+        unless $prop ~~ Iterable:D && $prop.all ~~ Str:D && ($prop (-) @knownProperties).elems == 0;
+
+        # Compute
+        my @res = do given ($count, $radius) {
             when ( $_.head ~~ UInt:D && $_.tail.isa(Whatever) ) {
-                self.k-nearest-rec(%!tree, @point, $count, 0).map(*<point>);
+                self.k-nearest-rec(%!tree, @point, $count, 0);
             }
             when ( $_.head.isa(Whatever) && $_.tail ~~ Numeric:D ) {
-                self.nearest-within-ball-rec(%!tree, @point, $radius, 0).map(*<point>);
+                self.nearest-within-ball-rec(%!tree, @point, $radius, 0);
             }
             when ( $_.head ~~ UInt:D && $_.tail ~~ Numeric:D ) {
-                self.nearest(@point, $_);
+                my @res = self.nearest-within-ball-rec(%!tree, @point, $radius, 0);
+                @res.sort(*<distance>)[^min($count, @res.elems)]
             }
             default {
-                note 'The argument $number-of-nearest-neighbors is expected to be non-negative integer or Whatever.' ~
+                note 'The argument $count is expected to be non-negative integer or Whatever. ' ~
                     'The argument $radius is expected to be a non-negative number of Whatever.';
                 Nil
             }
         }
-    }
 
-    multi method nearest(@point, UInt:D $k = 1) {
-        self.k-nearest-rec(%!tree, @point, $k, 0).map(*<point>);
-    }
-
-    multi method nearest(@point, Whatever) {
-        self.nearest(@point, 1);
-    }
-
-    multi method nearest(@point, ($k, $r)) {
-        if $r.isa(Whatever) {
-            return self.nearest(@point, $k);
-        }
-        my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
-        return do given $k {
-            when Whatever { @res.map(*<point>) }
-            when $_ ~~ UInt:D { @res.sort(*<distance>).map(*<point>)[^min($_, @res.elems)] }
+        # Result
+        return do given $prop.sort {
+            when <distance> {
+                @res.map({ $_<distance> });
+            }
+            when <point> {
+                return @res.map({ $_<point>.value });
+            }
+            when <index> {
+                return @res.map({ $_<point>.key });
+            }
+            when <index point> {
+                return @res.map({ ($_<point>.key, $_<point>.value) });
+            }
             default {
-                note "The number of nearest neighbors spec (the first element of the second argument) " ~
-                    "is expeted to be a non-negative integer or Whatever.";
-                @res
+                @res = @res.map({ %(distance => $_<distance>,
+                                    index => $_<point>.key,
+                                    point => $_<point>.value,
+                                    label => @!labels ?? @!labels[$_<point>.key] !! Whatever)
+                });
+
+                if $keys {
+                    @res.map({ $prop.Array Z=> $_{|$prop}.Array })>>.Hash
+                } else {
+                    @res.map({ $_{|$prop} })
+                }
             }
         }
     }
 
+#    multi method nearest(@point, ($k, $r)) {
+#        if $r.isa(Whatever) {
+#            return self.nearest(@point, $k);
+#        }
+#        my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
+#        return do given $k {
+#            when Whatever { @res.map(*<point>) }
+#            when $_ ~~ UInt:D { @res.sort(*<distance>).map(*<point>)[^min($_, @res.elems)] }
+#            default {
+#                note "The number of nearest neighbors spec (the first element of the second argument) " ~
+#                        "is expeted to be a non-negative integer or Whatever.";
+#                @res
+#            }
+#        }
+#    }
+
     method nearest-within-ball(@point, Numeric $r) {
-        self.nearest-within-ball-rec(%!tree, @point, $r, 0).map(*<point>);
+        self.nearest-within-ball-rec(%!tree, @point, $r, 0);
     }
 
     #======================================================
@@ -133,8 +198,8 @@ class Algorithm::KDimensionalTree
 
     method build-tree-rec(@points, $depth) {
         return %() if @points.elems == 0;
-        my $axis = $depth % @points[0].elems;
-        @points = @points.sort({ $_[$axis] });
+        my $axis = $depth % @points[0].value.elems;
+        @points = @points.sort({ $_.value[$axis] });
         my $median = @points.elems div 2;
         return {
             point => @points[$median],
@@ -147,11 +212,11 @@ class Algorithm::KDimensionalTree
     # K-nearest
     #======================================================
     method k-nearest-rec(%node, @point, $k, UInt $depth) {
-        return [] unless %node;;
+        return [] unless %node;
         my $axis = $depth % @point.elems;
 
         my (%next, %other);
-        if @point[$axis] < %node<point>[$axis] {
+        if @point[$axis] < %node<point>.value[$axis] {
             %next = %node<left>; %other = %node<right>;
         } else {
             %next = %node<right>; %other = %node<left>;
@@ -159,7 +224,7 @@ class Algorithm::KDimensionalTree
 
         # Recursively search
         my @best = self.k-nearest-rec(%next, @point, $k, $depth + 1);
-        @best.push( { point => %node<point>, distance => self.distance-function.(@point, %node<point>) } );
+        @best.push( { point => %node<point>, distance => self.distance-function.(@point, %node<point>.value) } );
 
         # Reorder best neighbors
         @best = @best.sort({ $_<distance> });
@@ -168,7 +233,7 @@ class Algorithm::KDimensionalTree
         # Recursively search if viable candidates _might_ exist
         #if @best.elems < $k || (abs(@point[$axis] - %node<point>[$axis]) ≤ @best.tail<distance>) {
         my @av1 = self.axis-vector(dim => @point.elems, :$axis, val => @point[$axis]);
-        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>[$axis]);
+        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>.value[$axis]);
         if @best.elems < $k || self.distance-function.(@av1, @av2) ≤ @best.tail<distance> {
             @best.append: self.k-nearest-rec(%other, @point, $k, $depth + 1);
             @best = @best.sort({ $_<distance> });
@@ -186,11 +251,11 @@ class Algorithm::KDimensionalTree
         return [] unless %node;
         my $axis = $depth % @point.elems;
 
-        my $dist = self.distance-function.(@point, %node<point>);
+        my $dist = self.distance-function.(@point, %node<point>.value);
         my %inside = $dist ≤ $r ?? { point => %node<point>, distance => $dist } !! Empty;
 
         my (%next, %other);
-        if @point[$axis] < %node<point>[$axis] {
+        if @point[$axis] < %node<point>.value[$axis] {
             %next = %node<left>; %other = %node<right>;
         } else {
             %next = %node<right>; %other = %node<left>;
@@ -202,7 +267,7 @@ class Algorithm::KDimensionalTree
 
         #if (abs(@point[$axis] - %node<point>[$axis]) ≤ $r) {
         my @av1 = self.axis-vector(dim => @point.elems, :$axis, val => @point[$axis]);
-        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>[$axis]);
+        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>.value[$axis]);
         if self.distance-function.(@av1, @av2) ≤ $r {
             @neighbors.append( self.nearest-within-ball-rec(%other, @point, $r, $depth + 1) );
         }
