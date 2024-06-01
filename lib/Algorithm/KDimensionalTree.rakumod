@@ -66,7 +66,7 @@ class Algorithm::KDimensionalTree
     # Representation
     #======================================================
     method gist(){
-        return "KDTree(points => {@!points.elems}, distance-function => {$!distance-function.gist})";
+        return "Algorithm::KDimensionalTree(points => {@!points.elems}, distance-function => {$!distance-function.gist})";
     }
 
     method Str(){
