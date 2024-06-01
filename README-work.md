@@ -93,10 +93,10 @@ height => 20);
   - [X] DONE Using distance functions other than Euclidean distance
   - [ ] TODO Returning properties
     - [X] DONE Points
-    - [ ] TODO Indexes
+    - [X] DONE Indexes
+    - [X] DONE Distances
     - [ ] TODO Labels
-    - [ ] TODO Distances
-    - [ ] TODO Combinations of those
+    - [X] DONE Combinations of those
   - [ ] TODO Having an umbrella function `nearest`
     - Instead of creating an KDTree object etc.
     - This might require making a functor `nearest-function`
