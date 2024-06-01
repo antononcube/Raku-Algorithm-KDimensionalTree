@@ -7,7 +7,6 @@ class Algorithm::KDimensionalTree
     has @.points;
     has %.tree;
     has $.distance-function;
-    has $!distance-function-name = '';
 
     #======================================================
     # Creators
@@ -17,17 +16,14 @@ class Algorithm::KDimensionalTree
         given $distance-function {
             when Whatever {
                 $!distance-function = &euclidean-distance;
-                $!distance-function-name = 'euclidean-distance';
             }
 
             when $_ ~~ Str:D && $_.lc ∈ <euclidean euclideandistance euclidean-distance> {
                 $!distance-function = &euclidean-distance;
-                $!distance-function-name = 'euclidean-distance';
             }
 
             when $_ ~~ Str:D && $_.lc ∈ <cosine cosinedistance cosine-distance> {
                 $!distance-function = &cosine-distance;
-                $!distance-function-name = 'cosine-distance';
             }
 
             when $_ ~~ Callable {
@@ -36,7 +32,6 @@ class Algorithm::KDimensionalTree
             default {
                 note "Do not know how to process the distance function spec.";
                 $!distance-function = &euclidean-distance;
-                $!distance-function-name = 'euclidean-distance';
             }
         }
         self.build-tree();
@@ -58,7 +53,7 @@ class Algorithm::KDimensionalTree
     # Representation
     #======================================================
     method gist(){
-        return "KDTree(points => {@!points.elems}, distance-function => $!distance-function-name)";
+        return "KDTree(points => {@!points.elems}, distance-function => {$!distance-function.gist})";
     }
 
     method Str(){
