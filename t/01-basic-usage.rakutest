@@ -19,7 +19,7 @@ my @searchPoint1 = |@points.head;
 is-deeply $kdTree1.nearest(@searchPoint1).Array, [@searchPoint1,];
 
 ## 3
-is-deeply $kdTree1.nearest-within-ball(@searchPoint1, 12), $kdTree1.nearest(@searchPoint1, (Whatever, 12));
+is-deeply $kdTree1.nearest-within-ball(@searchPoint1, 12).map({ $_<point>.value }), $kdTree1.nearest(@searchPoint1, (Whatever, 12));
 
 ## 4
 is-deeply $kdTree1.nearest(@searchPoint1, 3), $kdTree1.nearest(@searchPoint1, (3, Whatever));
