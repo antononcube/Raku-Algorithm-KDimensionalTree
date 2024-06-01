@@ -90,6 +90,8 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Top-level methods
     #======================================================
+    proto method nearest(@point, |) {*}
+
     multi method nearest(@point, UInt:D $count, :p(:$prop) = Whatever, Bool :$keys = False) {
         return self.nearest(@point, :$count, :$prop, :$keys);
     }
@@ -116,7 +118,7 @@ class Algorithm::KDimensionalTree
 
         # Compute
         my @res = do given ($count, $radius) {
-            when ( $_.head.isa(Whatever) && $.tail.isa(Whatever)) {
+            when $_.head.isa(Whatever) && $_.tail.isa(Whatever) {
                 self.k-nearest-rec(%!tree, @point, 1, 0);
             }
             when ( $_.head ~~ UInt:D && $_.tail.isa(Whatever) ) {
@@ -130,7 +132,7 @@ class Algorithm::KDimensionalTree
                 @res.sort(*<distance>)[^min($count, @res.elems)]
             }
             default {
-                note 'The argument $count is expected to be non-negative integer or Whatever. ' ~
+                note 'The argument $count is expected to be a non-negative integer or Whatever. ' ~
                     'The argument $radius is expected to be a non-negative number of Whatever.';
                 Nil
             }
@@ -166,10 +168,6 @@ class Algorithm::KDimensionalTree
         }
     }
 
-    method nearest-within-ball(@point, Numeric $r) {
-        self.nearest-within-ball-rec(%!tree, @point, $r, 0);
-    }
-
     #======================================================
     # Build the tree
     #======================================================
@@ -198,6 +196,10 @@ class Algorithm::KDimensionalTree
     #======================================================
     # K-nearest
     #======================================================
+    method k-nearest(@point, UInt $k = 1) {
+        return self.k-nearest-rec(%!tree, @point, $k, 0);
+    }
+
     method k-nearest-rec(%node, @point, $k, UInt $depth) {
         return [] unless %node;
         my $axis = $depth % @point.elems;
@@ -234,6 +236,9 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Nearest within a radius
     #======================================================
+    method nearest-within-ball(@point, Numeric $r) {
+        self.nearest-within-ball-rec(%!tree, @point, $r, 0);
+    }
     method nearest-within-ball-rec(%node, @point, $r, $depth) {
         return [] unless %node;
         my $axis = $depth % @point.elems;
