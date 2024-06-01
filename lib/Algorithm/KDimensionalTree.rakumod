@@ -12,7 +12,7 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Creators
     #======================================================
-    submethod BUILD(:@points, :$distance-function = &euclidean-distance) {
+    submethod BUILD(:@points, :$distance-function = 'euclidean-distance') {
         @!points = @points;
         given $distance-function {
             when Whatever {
@@ -42,11 +42,15 @@ class Algorithm::KDimensionalTree
         self.build-tree();
     }
 
-    multi method new(:@points, :$distance-function = &euclidean-distance) {
+    multi method new(:@points, :$distance-function = 'euclidean-distance') {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, $distance-function = &euclidean-distance) {
+    multi method new(@points, :$distance-function = 'euclidean-distance') {
+        self.bless(:@points, :$distance-function);
+    }
+
+    multi method new(@points, $distance-function = 'euclidean-distance') {
         self.bless(:@points, :$distance-function);
     }
 
@@ -54,12 +58,7 @@ class Algorithm::KDimensionalTree
     # Representation
     #======================================================
     method gist(){
-        my $func-id = do given $!distance-function {
-#            when $_ ~~ &euclidean-distance() { "Euclidean" }
-#            when $_ ~~ &cosine() { "Cosine" }
-            default { "Unknown" }
-        }
-        return "KDTree(points => {@!points.elems}, distance-function => $func-id)";
+        return "KDTree(points => {@!points.elems}, distance-function => $!distance-function-name)";
     }
 
     method Str(){
@@ -83,7 +82,7 @@ class Algorithm::KDimensionalTree
                 self.k-nearest-rec(%!tree, @point, $count, 0).map(*<point>);
             }
             when ( $_.head.isa(Whatever) && $_.tail ~~ Numeric:D ) {
-                self.nearest-within-ball-rec(%!tree, @point, $radius, 0);
+                self.nearest-within-ball-rec(%!tree, @point, $radius, 0).map(*<point>);
             }
             when ( $_.head ~~ UInt:D && $_.tail ~~ Numeric:D ) {
                 self.nearest(@point, $_);
@@ -127,6 +126,12 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Build the tree
     #======================================================
+    method axis-vector(UInt :$dim, UInt :$axis, :$val) {
+        my @vec = 0 xx $dim;
+        @vec[$axis] = $val;
+        return @vec;
+    }
+
     method build-tree() {
         %!tree = self.build-tree-rec(@!points, 0);
     }
@@ -166,7 +171,10 @@ class Algorithm::KDimensionalTree
         @best = @best[^$k] if @best.elems > $k;
 
         # Recursively search if viable candidates _might_ exist
-        if @best.elems < $k || (abs(@point[$axis] - %node<point>[$axis]) ≤ @best.tail<distance>) {
+        #if @best.elems < $k || (abs(@point[$axis] - %node<point>[$axis]) ≤ @best.tail<distance>) {
+        my @av1 = self.axis-vector(dim => @point.elems, :$axis, val => @point[$axis]);
+        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>[$axis]);
+        if @best.elems < $k || self.distance-function.(@av1, @av2) ≤ @best.tail<distance> {
             @best.append: self.k-nearest-rec(%other, @point, $k, $depth + 1);
             @best = @best.sort({ $_<distance> });
             @best = @best[^$k] if @best.elems > $k;
@@ -197,7 +205,10 @@ class Algorithm::KDimensionalTree
 
         @neighbors.push(%inside) if %inside;
 
-        if (abs(@point[$axis] - %node<point>[$axis]) ≤ $r) {
+        #if (abs(@point[$axis] - %node<point>[$axis]) ≤ $r) {
+        my @av1 = self.axis-vector(dim => @point.elems, :$axis, val => @point[$axis]);
+        my @av2 = self.axis-vector(dim => @point.elems, :$axis, val => %node<point>[$axis]);
+        if self.distance-function.(@av1, @av2) ≤ $r {
             @neighbors.append( self.nearest-within-ball-rec(%other, @point, $r, $depth + 1) );
         }
 
