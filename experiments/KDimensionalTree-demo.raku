@@ -50,12 +50,21 @@ say "=" x 120;
 say 'Nearest neighbors within a radius';
 say "-" x 120;
 
+use Data::Generators;
+
+my @labels = random-pet-name(2 * @points.elems).unique[^@points.elems];
+my @points2 = (@labels.Array Z=> @points).Array;
+
+my $kdTree2 = Algorithm::KDimensionalTree.new( @points2 );
+
+say $kdTree2;
+
 my $tstart2 = now;
-my @res2 = $kdTree.nearest(@searchPoint, count => Whatever, radius => 20, prop => <index>);
+my @res2 = $kdTree2.nearest(@searchPoint, count => Whatever, radius => 20, prop => <label>);
 my $tend2 = now;
 say "Computation time: {$tend2 - $tstart2}";
 
-my @res3 = $kdTree.nearest(@searchPoint, count => 20, radius => 20, prop => <index>);
+my @res3 = $kdTree2.nearest(@searchPoint, count => 10, radius => 20, prop => <label>);
 
 say (:@res2);
 say (:@res3);
@@ -63,7 +72,7 @@ say (:@res3);
 @point-char =  <* ⏺ ▲ ø>;
 say <data all-nns 20-nns search> Z=> @point-char;
 say text-list-plot(
-        [@points, @points[|@res2], @points[|@res3], [@searchPoint,]],
+        [@points, @points2.Hash{|@res2}, @points2.Hash{|@res3}, [@searchPoint,]],
         :@point-char,
         x-limit => (0, 100),
         y-limit => (0, 100),
