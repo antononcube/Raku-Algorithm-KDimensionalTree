@@ -1,6 +1,7 @@
 use v6.d;
 
 use Math::DistanceFunctions;
+use Math::DistanceFunctionish;
 
 class Algorithm::KDimensionalTree
         does Math::DistanceFunctionish {
@@ -14,24 +15,23 @@ class Algorithm::KDimensionalTree
     submethod BUILD(:@points, :$distance-function = 'euclidean-distance') {
         @!points = @points;
         given $distance-function {
-            when Whatever {
+            when $_.isa(Whatever) || $_.isa(WhateverCode) {
                 $!distance-function = &euclidean-distance;
             }
 
-            when $_ ~~ Str:D && $_.lc ∈ <euclidean euclideandistance euclidean-distance> {
-                $!distance-function = &euclidean-distance;
-            }
-
-            when $_ ~~ Str:D && $_.lc ∈ <cosine cosinedistance cosine-distance> {
-                $!distance-function = &cosine-distance;
+            when $_ ~~ Str:D {
+                $!distance-function = self.get-distance-function($_, :!warn);
+                if $!distance-function.isa(WhateverCode) {
+                    die "Unknown name of a distance function ⎡$distance-function⎦.";
+                }
             }
 
             when $_ ~~ Callable {
                 $!distance-function = $distance-function;
             }
+
             default {
-                note "Do not know how to process the distance function spec.";
-                $!distance-function = &euclidean-distance;
+                die "Do not know how to process the distance function spec.";
             }
         }
         self.build-tree();
