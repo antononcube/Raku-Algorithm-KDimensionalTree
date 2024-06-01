@@ -40,11 +40,11 @@ class Algorithm::KDimensionalTree
         # If an array of arrays make it an array of pars
         if @!points.all ~~ Positional:D {
             @!points = @!points.pairs;
-        } elsif @!points.all ~~ Map:D {
+        } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
             @!points = @!points>>.value.pairs;
         } else {
-            die "The points argument is expected to be an array of arrays or an array of hashes.";
+            die "The points argument is expected to be an array of arrays or an array of pairs.";
         }
 
         self.build-tree();
@@ -154,7 +154,7 @@ class Algorithm::KDimensionalTree
                 @res = @res.map({ %(distance => $_<distance>,
                                     index => $_<point>.key,
                                     point => $_<point>.value,
-                                    label => @!labels ?? @!labels[$_<point>.key] !! Whatever)
+                                    label => @!labels.elems ?? @!labels[$_<point>.key] !! Whatever)
                 });
 
                 if $keys {
@@ -165,22 +165,6 @@ class Algorithm::KDimensionalTree
             }
         }
     }
-
-#    multi method nearest(@point, ($k, $r)) {
-#        if $r.isa(Whatever) {
-#            return self.nearest(@point, $k);
-#        }
-#        my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
-#        return do given $k {
-#            when Whatever { @res.map(*<point>) }
-#            when $_ ~~ UInt:D { @res.sort(*<distance>).map(*<point>)[^min($_, @res.elems)] }
-#            default {
-#                note "The number of nearest neighbors spec (the first element of the second argument) " ~
-#                        "is expeted to be a non-negative integer or Whatever.";
-#                @res
-#            }
-#        }
-#    }
 
     method nearest-within-ball(@point, Numeric $r) {
         self.nearest-within-ball-rec(%!tree, @point, $r, 0);
