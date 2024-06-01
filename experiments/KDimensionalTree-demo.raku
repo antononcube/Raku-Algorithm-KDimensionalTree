@@ -8,7 +8,7 @@ use Data::TypeSystem;
 use Math::DistanceFunctions;
 use Text::Plot;
 
-my @points = ([(^100).rand, (^100).rand] xx 100).unique;
+my @points = ([(^100).rand, (^100).rand] xx 300).unique;
 
 say deduce-type(@points);
 
@@ -32,9 +32,9 @@ say "Computation time: {$tend - $tstart}";
 
 say (:@res);
 say 'elems => ', @res.elems;
-say "Contains the search point: {[||]  @res.map({ euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
+say "Contains the search point: {[||] @res.map({ euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
 
-my @point-char =  <* ⏺ ▲>;
+my @point-char =  <* ⏺ ø>;
 say <data nns search> Z=> @point-char;
 say text-list-plot(
         [@points, @res, [@searchPoint,]],
@@ -51,18 +51,19 @@ say 'Nearest neighbors within a radius';
 say "-" x 120;
 
 my $tstart2 = now;
-#my @res2 = $kdTree.nearest-within-ball(@searchPoint, 45);
-my @res2 = $kdTree.nearest(@searchPoint, n => 30, r =>45);
+my @res2 = $kdTree.nearest(@searchPoint, count => Whatever, radius => 20, prop => <index>);
 my $tend2 = now;
 say "Computation time: {$tend2 - $tstart2}";
 
-say (:@res2);
-say 'elems => ', @res2.elems;
-say "Contains the search point: {[||]  @res2.map({ euclidean-distance(@searchPoint, $_) ≤ 0e-12 })}";
+my @res3 = $kdTree.nearest(@searchPoint, count => 20, radius => 20, prop => <index>);
 
-say <data nns search> Z=> @point-char;
+say (:@res2);
+say (:@res3);
+
+@point-char =  <* ⏺ ▲ ø>;
+say <data all-nns 20-nns search> Z=> @point-char;
 say text-list-plot(
-        [@points, @res2, [@searchPoint,]],
+        [@points, @points[|@res2], @points[|@res3], [@searchPoint,]],
         :@point-char,
         x-limit => (0, 100),
         y-limit => (0, 100),
