@@ -58,7 +58,7 @@ my $kdTree = Algorithm::KDimensionalTree.new(@points);
 say $kdTree;
 ```
 ```
-# KDTree(points => 30, distance-function => Unknown)
+# KDTree(points => 30, distance-function => &euclidean-distance)
 ```
 
 ### Nearest k-neighbors
@@ -69,7 +69,7 @@ Use as a search point one from the points set:
 my @searchPoint = |@points.head;
 ```
 ```
-# [47.33064406506299 76.37307064050573]
+# [76.11079267429541 19.074237975241303]
 ```
 
 Find 6 nearest neighbors:
@@ -79,12 +79,12 @@ my @res = $kdTree.nearest(@searchPoint, 6);
 .say for @res;
 ```
 ```
-# [47.33064406506299 76.37307064050573]
-# [33.321989165943265 72.2106395557012]
-# [42.367775385271564 92.76001291548755]
-# [56.24834629183131 60.79449358393906]
-# [44.09972101660911 95.32962593733126]
-# [69.96118735293926 66.53535849892195]
+# [76.11079267429541 19.074237975241303]
+# [77.1914003305045 17.697882436033087]
+# [77.60063860528398 15.129373797321177]
+# [82.00906846807615 20.61997200485688]
+# [69.89508017066133 10.633033332034813]
+# [75.99198529805767 33.32069663826959]
 ```
 
 ### Plot
@@ -105,24 +105,24 @@ height => 20);
 ```
 # (data => * nns => ⏺ search => ▲)
 # ++----------+-----------+----------+-----------+----------++       
-# +                                                      *   + 100.00
-# |                        ⏺⏺             *                  |       
+# + *                                                        + 100.00
+# |      *              *     *                             *|       
+# |                           *                              |       
+# +                               *                          +  80.00
+# |  *           *                                           |       
+# |                              *                           |       
+# |    *  *                                                  |       
+# +                                                       *  +  60.00
+# |                          *                               |       
+# |                                *     *                   |       
+# +                                                        * +  40.00
+# |                          *         *      ⏺              |       
 # |                                                          |       
-# + *                                                        +  80.00
-# |                           ▲              *    *          |       
-# | *        *        ⏺                                      |       
-# |                                        ⏺          *      |       
-# +                                ⏺                  **     +  60.00
-# |                 *                                        |       
-# |             *                                          * |       
-# + *             *                                          +  40.00
-# |                            *       **                    |       
+# |                            *                  ⏺        * |       
+# +                                           ▲⏺             +  20.00
+# |           *                            ⏺                 |       
 # |                                                          |       
-# |                                                          |       
-# +                                               *          +  20.00
-# |                                *         *         *     |       
-# |             *                                            |       
-# +                        *                                 +   0.00
+# +         *                                                +   0.00
 # ++----------+-----------+----------+-----------+----------++       
 #  0.00       20.00       40.00      60.00       80.00      100.00
 ```
@@ -132,9 +132,9 @@ height => 20);
 ## TODO
 
 - [ ] TODO Implementation
-  - [ ] TODO Using distance functions other than Euclidean distance
-  - [ ] TODO Using distance functions from an "universal" package
+  - [X] DONE Using distance functions from an "universal" package
     - E.g. "Math::DistanceFunctions"
+  - [X] DONE Using distance functions other than Euclidean distance
   - [ ] TODO Returning properties
     - [X] DONE Points
     - [ ] TODO Indexes
@@ -145,6 +145,8 @@ height => 20);
     - Instead of creating an KDTree object etc.
     - This might require making a functor `nearest-function`
     - This is better done in a different package
+- [X] DONE Extensive correctness tests
+  - Derived with Mathematica / WL (see the resources)
 - [ ] TODO Documentation
   - [X] DONE Basic usage examples with text plots 
   - [ ] TODO More extensive documentation with a Jupyter notebook

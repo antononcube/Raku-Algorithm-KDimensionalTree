@@ -90,7 +90,7 @@ height => 20);
 - [ ] TODO Implementation
   - [X] DONE Using distance functions from an "universal" package
     - E.g. "Math::DistanceFunctions"
-  - [ ] TODO Using distance functions other than Euclidean distance
+  - [X] DONE Using distance functions other than Euclidean distance
   - [ ] TODO Returning properties
     - [X] DONE Points
     - [ ] TODO Indexes
@@ -101,6 +101,8 @@ height => 20);
     - Instead of creating an KDTree object etc.
     - This might require making a functor `nearest-function`
     - This is better done in a different package
+- [X] DONE Extensive correctness tests
+  - Derived with Mathematica / WL (see the resources)
 - [ ] TODO Documentation
   - [X] DONE Basic usage examples with text plots 
   - [ ] TODO More extensive documentation with a Jupyter notebook
