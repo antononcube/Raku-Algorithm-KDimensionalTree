@@ -16,7 +16,7 @@ ok Algorithm::KDimensionalTree.gist;
 is Algorithm::KDimensionalTree.gist, '(KDimensionalTree)';
 
 ## 3
-my @points = ([2.rand,] xx 30).Array;
+my @points = (2.rand xx 30).Array;
 my $obj = Algorithm::KDimensionalTree.new(:@points, distance-function => Whatever);
 is $obj.gist, 'Algorithm::KDimensionalTree(points => 30, distance-function => &euclidean-distance)';
 

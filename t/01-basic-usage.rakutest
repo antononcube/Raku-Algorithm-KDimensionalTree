@@ -15,22 +15,25 @@ $kdTree1 = Algorithm::KDimensionalTree.new(@points);
 isa-ok $kdTree1, Algorithm::KDimensionalTree:D;
 
 ## 2
+isa-ok Algorithm::KDimensionalTree.new(points => (3.rand xx 30), distance-function => 'euclidean-distance'),  Algorithm::KDimensionalTree:D;
+
+## 3
 my @searchPoint1 = |@points.head;
 is-deeply $kdTree1.k-nearest(@searchPoint1, 1, :!values).map(*<point>.value).Array, [@searchPoint1,];
 
-## 3
+## 4
 is-deeply
         $kdTree1.k-nearest(@searchPoint1, 3, :!values).map(*<point>.value).Array,
         $kdTree1.k-nearest(@searchPoint1, 3, :values).Array,
         "Values adverb";
 
-## 4
+## 5
 is-deeply
         $kdTree1.k-nearest(@searchPoint1, 5),
         $kdTree1.nearest-within-ball(@searchPoint1, 60, :!values).sort(*<distance>).map(*<point>.value)[^5],
         "Equivalence for k-nearest and within ball";
 
-## 5
+## 6
 # Make verification test with direct scanning of @points.
 my @nns6 = @points.sort({ sqrt [+] ($_.Array Z- @searchPoint1).map(* ** 2) });
 is-deeply $kdTree1.k-nearest(@searchPoint1, 12), @nns6[^12];
