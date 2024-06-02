@@ -28,7 +28,7 @@ my @expected = |%data{$distance-function}<nns>;
 my $kdTree = Algorithm::KDimensionalTree.new(@points, :$distance-function);
 say $kdTree;
 
-my @res = $kdTree.nearest(@searchPoint, :$radius);
+my @res = $kdTree.nearest-within-ball(@searchPoint, $radius):v;
 
 say 'expected elems => ', @expected.elems;
 say 'result elems   => ', @res.elems;
