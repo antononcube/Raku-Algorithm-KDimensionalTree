@@ -16,20 +16,17 @@ isa-ok $kdTree1, Algorithm::KDimensionalTree:D;
 
 ## 2
 my @searchPoint1 = |@points.head;
-is-deeply $kdTree1.nearest(@searchPoint1).Array, [@searchPoint1,];
+is-deeply $kdTree1.k-nearest(@searchPoint1, 1).map(*<point>.value).Array, [@searchPoint1,];
 
 ## 3
-is-deeply $kdTree1.nearest-within-ball(@searchPoint1, 12).map({ $_<point>.value }), $kdTree1.nearest(@searchPoint1, (Whatever, 12));
+is-deeply
+        $kdTree1.k-nearest(@searchPoint1, 5).map(*<point>.value),
+        $kdTree1.nearest-within-ball(@searchPoint1, 60).sort(*<distance>).map(*<point>.value)[^5],
+        "Equivalence for k-nearest and within ball";
 
 ## 4
-is-deeply $kdTree1.nearest(@searchPoint1, 3), $kdTree1.nearest(@searchPoint1, (3, Whatever));
-
-## 5
-is-deeply $kdTree1.nearest(@searchPoint1, 5).sort, $kdTree1.nearest(@searchPoint1, (5, 60)).sort;
-
-## 6
 # Make verification test with direct scanning of @points.
 my @nns6 = @points.sort({ sqrt [+] ($_.Array Z- @searchPoint1).map(* ** 2) });
-is-deeply $kdTree1.nearest(@searchPoint1, 12), @nns6[^12];
+is-deeply $kdTree1.k-nearest(@searchPoint1, 12).map(*<point>.value), @nns6[^12];
 
 done-testing;

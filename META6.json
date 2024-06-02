@@ -1,7 +1,7 @@
 {
   "name": "Algorithm::KDimensionalTree",
   "description": "K-dimensional Tree (K-d tree) algorithm implementations.",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "authors": [
     "Anton Antonov"
   ],
@@ -12,8 +12,7 @@
   "build-depends": [],
   "test-depends": [],
   "provides": {
-    "Algorithm::KDimensionalTree": "lib/Algorithm/KDimensionalTree.rakumod",
-    "Algorithm::NodalKDTree": "lib/Algorithm/NodalKDTree.rakumod"
+    "Algorithm::KDimensionalTree": "lib/Algorithm/KDimensionalTree.rakumod"
   },
   "resources": [
     "KDTreeTest.json",
@@ -26,7 +25,7 @@
     "spatial search",
     "nearest"
   ],
-  "api": "0",
+  "api": "1",
   "source-url": "https://github.com/antononcube/Raku-Algorithm-KDTree.git",
   "raku": "6.d"
 }
