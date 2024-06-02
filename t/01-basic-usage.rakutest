@@ -38,4 +38,11 @@ is-deeply
 my @nns6 = @points.sort({ sqrt [+] ($_.Array Z- @searchPoint1).map(* ** 2) });
 is-deeply $kdTree1.k-nearest(@searchPoint1, 12), @nns6[^12];
 
+## 7
+my $kdTree7 = Algorithm::KDimensionalTree.new(points => (3.rand xx 30), distance-function => 'euclidean-distance');
+isa-ok $kdTree7.k-nearest(2, 2), Iterable;
+
+## 8
+isa-ok $kdTree7.nearest-within-ball(2, 1), Iterable;
+
 done-testing;
