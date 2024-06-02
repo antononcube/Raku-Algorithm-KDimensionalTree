@@ -38,13 +38,15 @@ class Algorithm::KDimensionalTree
 
         # Process points
         # If an array of arrays make it an array of pars
-        if @!points.all ~~ Positional:D {
+        if @!points.all !~~ Iterable:D {
+            @!points = @!points.map({[$_, ]}).pairs;
+        } elsif @!points.all ~~ Iterable:D {
             @!points = @!points.pairs;
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
             @!points = @!points>>.value.pairs;
         } else {
-            die "The points argument is expected to be an array of arrays or an array of pairs.";
+            die "The points argument is expected to be an array of numbers, an array of arrays, or an array of pairs.";
         }
 
         self.build-tree();
