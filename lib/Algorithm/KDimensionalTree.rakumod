@@ -13,7 +13,7 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Creators
     #======================================================
-    submethod BUILD(:@points, :$distance-function = 'euclidean-distance') {
+    submethod BUILD(:@points, :$distance-function = Whatever) {
         @!points = @points;
         given $distance-function {
             when $_.isa(Whatever) || $_.isa(WhateverCode) {
@@ -50,23 +50,24 @@ class Algorithm::KDimensionalTree
         self.build-tree();
     }
 
-    multi method new(:@points, :$distance-function = 'euclidean-distance') {
+    multi method new(:@points, :$distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, :$distance-function = 'euclidean-distance') {
+    multi method new(@points, :$distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, $distance-function = 'euclidean-distance') {
+    multi method new(@points, $distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
     #======================================================
     # Representation
     #======================================================
-    method gist(){
-        return "Algorithm::KDimensionalTree(points => {@!points.elems}, distance-function => {$!distance-function.gist})";
+    multi method gist(::?CLASS:D:-->Str) {
+        my $lblPart = @!labels.elems > 0 ?? ", labels => {@!labels.elems}" !! '';
+        return "Algorithm::KDimensionalTree(points => {@!points.elems}, distance-function => {$!distance-function.gist}" ~ $lblPart ~ ')';
     }
 
     method Str(){
