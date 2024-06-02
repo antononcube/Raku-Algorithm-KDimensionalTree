@@ -14,6 +14,9 @@ Compared to the simple scanning algorithm this implementation of the K-D Tree al
 for randomly generated low dimensional data. (Say. less than 6D.) 
 It can be 200+ times faster for "real life" data, like, Geo-locations of USA cities.
 
+The implementation is tested for correctness against Mathematica's [`Nearest`](https://reference.wolfram.com/language/ref/Nearest.html).
+(See the resource files.)
+
 ### Features
 
 - Finds both top-k Nearest Neighbors (NNs).
@@ -89,7 +92,7 @@ Use as a search point one from the points set:
 my @searchPoint = |@points.head;
 ```
 ```
-# [48.479435879743015 81.04760155205554]
+# [89.27640360563157 68.36845738910054]
 ```
 
 Find 6 nearest neighbors:
@@ -99,12 +102,12 @@ my @res = $kdTree.k-nearest(@searchPoint, 6);
 .say for @res;
 ```
 ```
-# [48.479435879743015 81.04760155205554]
-# [37.04504331847397 74.32393806646432]
-# [34.53779251085981 72.23868251724727]
-# [64.38426722860416 75.10683211724667]
-# [39.331213769522265 96.24194841724474]
-# [35.37045265382041 96.84399039147331]
+# [89.27640360563157 68.36845738910054]
+# [91.96352893754062 73.56174634865347]
+# [80.0160216888336 69.80400458389097]
+# [99.2564424012451 76.5797786385005]
+# [79.5081497932748 52.564329376808196]
+# [76.82139591710131 47.8616016873568]
 ```
 
 ### Plot
@@ -126,23 +129,23 @@ height => 20);
 # (data => * nns => ⏺ search => ▲)
 # ++----------+-----------+----------+-----------+----------++       
 # +                                                          + 100.00
-# |                    ⏺ ⏺                              *    |       
+# |             *                                            |       
+# |           *                          *                   |       
+# +                                                          +  80.00
+# |                                                    ⏺    ⏺|       
+# |               *                    *         ⏺    ▲      |       
+# |                     *           *                        |       
+# +                                                          +  60.00
+# |      *      *                   *           ⏺            |       
+# |                                            ⏺            *|       
+# +    *                                 **       *          +  40.00
 # |                                                          |       
-# +        *                   ▲                             +  80.00
-# |                     ⏺               ⏺                    |       
-# |                    ⏺                                     |       
-# |         *         *                                 *    |       
-# +       *                                                  +  60.00
-# |                                              *           |       
-# |  *       *                 *  *                          |       
-# +       *                        *       *                 +  40.00
-# |                                                          |       
-# |                      *        *                          |       
-# |                    *              *                *     |       
-# +                                            *             +  20.00
-# |                                                          |       
-# |                   *                       *  *           |       
-# +                    *                                     +   0.00
+# |                            *       *           *         |       
+# |                   *                                      |       
+# +              *                                           +  20.00
+# |               *                                          |       
+# | *                              *           *             |       
+# +                                                          +   0.00
 # ++----------+-----------+----------+-----------+----------++       
 #  0.00       20.00       40.00      60.00       80.00      100.00
 ```

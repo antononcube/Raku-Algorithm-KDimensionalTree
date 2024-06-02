@@ -14,6 +14,9 @@ Compared to the simple scanning algorithm this implementation of the K-D Tree al
 for randomly generated low dimensional data. (Say. less than 6D.) 
 It can be 200+ times faster for "real life" data, like, Geo-locations of USA cities.
 
+The implementation is tested for correctness against Mathematica's [`Nearest`](https://reference.wolfram.com/language/ref/Nearest.html).
+(See the resource files.)
+
 ### Features
 
 - Finds both top-k Nearest Neighbors (NNs).
