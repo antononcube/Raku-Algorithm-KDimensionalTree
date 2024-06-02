@@ -58,7 +58,7 @@ my $kdTree = Algorithm::KDimensionalTree.new(@points);
 say $kdTree;
 ```
 ```
-# KDTree(points => 30, distance-function => &euclidean-distance)
+# Algorithm::KDimensionalTree(points => 30, distance-function => &__PRIMED_ANON)
 ```
 
 ### Nearest k-neighbors
@@ -69,7 +69,7 @@ Use as a search point one from the points set:
 my @searchPoint = |@points.head;
 ```
 ```
-# [11.23863000548776 0.2743140198537275]
+# [65.31568507270168 73.39129613258682]
 ```
 
 Find 6 nearest neighbors:
@@ -79,12 +79,12 @@ my @res = $kdTree.nearest(@searchPoint, 6);
 .say for @res;
 ```
 ```
-# [11.23863000548776 0.2743140198537275]
-# [21.260640480596138 0.5194521243347072]
-# [3.6574221024535447 9.308635964439759]
-# [23.86439763031384 3.4335606890621206]
-# [29.01770401400725 3.7120381393544455]
-# [24.325027392268318 15.476292903538347]
+# [65.31568507270168 73.39129613258682]
+# [61.18182008519882 79.28742546516571]
+# [66.1121907063308 59.23906402625331]
+# [77.28961526330954 88.92714778546436]
+# [77.1928049829541 89.78301688451745]
+# [84.43863023875075 62.27395566336109]
 ```
 
 ### Plot
@@ -105,24 +105,24 @@ height => 20);
 ```
 # (data => * nns => ⏺ search => ▲)
 # ++----------+-----------+----------+-----------+----------++       
-# +                              *                           + 100.00
-# |                                                          |       
-# |          *   *                         *          *      |       
-# +          *                             *                 +  80.00
-# |                                                          |       
-# |*                              *                          |       
-# |                           * *                            |       
-# +                         *                                +  60.00
-# |                                       **                 |       
-# |                                                          |       
-# +                                                          +  40.00
-# |                                          *   *           |       
-# |                                                          |       
-# |                    *         *                           |       
-# +              ⏺                          *                +  20.00
-# |  ⏺                      * *                       *      |       
-# |              ⏺  ⏺ *                                      |       
-# +      ▲     ⏺                                    *        +   0.00
+# +  *                                  *                    + 100.00
+# |          *                                      *        |       
+# |                                            ⏺       *     |       
+# +                                                          +  80.00
+# |     *                *            ⏺                      |       
+# |                                     ▲                    |       
+# |               *                                ⏺         |       
+# +                                      ⏺                   +  60.00
+# |                                                *         |       
+# |      *          *                                        |       
+# +                      *                                   +  40.00
+# |                *                                         |       
+# |      *        *                            *     *       |       
+# |                       *    *                         *   |       
+# +                                              *           +  20.00
+# |                   *                  *                   |       
+# |                                                    *     |       
+# +                                                          +   0.00
 # ++----------+-----------+----------+-----------+----------++       
 #  0.00       20.00       40.00      60.00       80.00      100.00
 ```
@@ -139,12 +139,17 @@ height => 20);
     - [X] DONE Points
     - [X] DONE Indexes
     - [X] DONE Distances
-    - [ ] TODO Labels
+    - [X] DONE Labels
     - [X] DONE Combinations of those
-  - [ ] TODO Having an umbrella function `nearest`
-    - Instead of creating an KDTree object etc.
+    - This is implemented by should be removed.
+      - There is another package -- ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest) -- 
+        that to handle *all* nearest neighbors finders. 
+      - Version "0.1.0 with "api<1>" will be without the `.nearest` method.
+  - [X] DONE Having an umbrella function `nearest`
+    - Instead of creating a KDTree object etc.
     - This might require making a functor `nearest-function`
     - This is better done in a different package
+      - See ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest)
 - [X] DONE Extensive correctness tests
   - Derived with Mathematica / WL (see the resources)
 - [ ] TODO Documentation

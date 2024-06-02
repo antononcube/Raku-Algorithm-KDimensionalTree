@@ -95,12 +95,17 @@ height => 20);
     - [X] DONE Points
     - [X] DONE Indexes
     - [X] DONE Distances
-    - [ ] TODO Labels
+    - [X] DONE Labels
     - [X] DONE Combinations of those
-  - [ ] TODO Having an umbrella function `nearest`
-    - Instead of creating an KDTree object etc.
+    - This is implemented by should be removed.
+      - There is another package -- ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest) -- 
+        that to handle *all* nearest neighbors finders. 
+      - Version "0.1.0 with "api<1>" will be without the `.nearest` method.
+  - [X] DONE Having an umbrella function `nearest`
+    - Instead of creating a KDTree object etc.
     - This might require making a functor `nearest-function`
     - This is better done in a different package
+      - See ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest)
 - [X] DONE Extensive correctness tests
   - Derived with Mathematica / WL (see the resources)
 - [ ] TODO Documentation
