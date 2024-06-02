@@ -69,22 +69,22 @@ Use as a search point one from the points set:
 my @searchPoint = |@points.head;
 ```
 ```
-# [65.31568507270168 73.39129613258682]
+# [79.46355544796029 73.57994430989753]
 ```
 
 Find 6 nearest neighbors:
 
 ```perl6
-my @res = $kdTree.nearest(@searchPoint, 6);
+my @res = $kdTree.k-nearest(@searchPoint, 6);
 .say for @res;
 ```
 ```
-# [65.31568507270168 73.39129613258682]
-# [61.18182008519882 79.28742546516571]
-# [66.1121907063308 59.23906402625331]
-# [77.28961526330954 88.92714778546436]
-# [77.1928049829541 89.78301688451745]
-# [84.43863023875075 62.27395566336109]
+# [79.46355544796029 73.57994430989753]
+# [84.5188686179004 68.57302986161342]
+# [69.41252346451878 85.03008523892218]
+# [73.41956102725014 90.07214985532534]
+# [97.27908845871846 79.46970340362107]
+# [91.4523495275751 58.92368277489477]
 ```
 
 ### Plot
@@ -105,23 +105,23 @@ height => 20);
 ```
 # (data => * nns => ⏺ search => ▲)
 # ++----------+-----------+----------+-----------+----------++       
-# +  *                                  *                    + 100.00
-# |          *                                      *        |       
-# |                                            ⏺       *     |       
-# +                                                          +  80.00
-# |     *                *            ⏺                      |       
-# |                                     ▲                    |       
-# |               *                                ⏺         |       
-# +                                      ⏺                   +  60.00
-# |                                                *         |       
-# |      *          *                                        |       
-# +                      *                                   +  40.00
-# |                *                                         |       
-# |      *        *                            *     *       |       
-# |                       *    *                         *   |       
-# +                                              *           +  20.00
-# |                   *                  *                   |       
-# |                                                    *     |       
+# +                                                          + 100.00
+# |            *     *                                       |       
+# |    ***                            *      ⏺               |       
+# +         *              *               ⏺              ⏺  +  80.00
+# |                                             ▲            |       
+# |      *                                         ⏺         |       
+# |                                                          |       
+# +       *                      *                     ⏺     +  60.00
+# |               *                                          |       
+# |     *         *            *                             |       
+# +                                                          +  40.00
+# | *  **                   *                                |       
+# |          *                                            *  |       
+# |                                      *                   |       
+# +                                                      *   +  20.00
+# |                                                          |       
+# |                          *                               |       
 # +                                                          +   0.00
 # ++----------+-----------+----------+-----------+----------++       
 #  0.00       20.00       40.00      60.00       80.00      100.00
@@ -131,11 +131,11 @@ height => 20);
 
 ## TODO
 
-- [ ] TODO Implementation
+- [X] DONE Implementation
   - [X] DONE Using distance functions from an "universal" package
     - E.g. "Math::DistanceFunctions"
   - [X] DONE Using distance functions other than Euclidean distance
-  - [ ] TODO Returning properties
+  - [X] DONE Returning properties
     - [X] DONE Points
     - [X] DONE Indexes
     - [X] DONE Distances
@@ -144,7 +144,7 @@ height => 20);
     - This is implemented by should be removed.
       - There is another package -- ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest) -- 
         that to handle *all* nearest neighbors finders. 
-      - Version "0.1.0 with "api<1>" will be without the `.nearest` method.
+      - Version "0.1.0 with "api<1>" is without the `.nearest` method.
   - [X] DONE Having an umbrella function `nearest`
     - Instead of creating a KDTree object etc.
     - This might require making a functor `nearest-function`

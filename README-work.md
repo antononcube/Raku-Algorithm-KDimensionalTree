@@ -63,7 +63,7 @@ my @searchPoint = |@points.head;
 Find 6 nearest neighbors:
 
 ```perl6
-my @res = $kdTree.nearest(@searchPoint, 6);
+my @res = $kdTree.k-nearest(@searchPoint, 6);
 .say for @res;
 ```
 
@@ -87,11 +87,11 @@ height => 20);
 
 ## TODO
 
-- [ ] TODO Implementation
+- [X] DONE Implementation
   - [X] DONE Using distance functions from an "universal" package
     - E.g. "Math::DistanceFunctions"
   - [X] DONE Using distance functions other than Euclidean distance
-  - [ ] TODO Returning properties
+  - [X] DONE Returning properties
     - [X] DONE Points
     - [X] DONE Indexes
     - [X] DONE Distances
@@ -100,7 +100,7 @@ height => 20);
     - This is implemented by should be removed.
       - There is another package -- ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest) -- 
         that to handle *all* nearest neighbors finders. 
-      - Version "0.1.0 with "api<1>" will be without the `.nearest` method.
+      - Version "0.1.0 with "api<1>" is without the `.nearest` method.
   - [X] DONE Having an umbrella function `nearest`
     - Instead of creating a KDTree object etc.
     - This might require making a functor `nearest-function`
