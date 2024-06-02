@@ -115,8 +115,9 @@ class Algorithm::KDimensionalTree
     #======================================================
     # K-nearest
     #======================================================
-    method k-nearest(@point, UInt $k = 1) {
-        return self.k-nearest-rec(%!tree, @point, $k, 0);
+    method k-nearest(@point, UInt $k = 1, Bool :v(:$values) = True) {
+        my @res = self.k-nearest-rec(%!tree, @point, $k, 0);
+        return $values ?? @res.map(*<point>.value) !! @res;
     }
 
     method k-nearest-rec(%node, @point, $k, UInt $depth) {
@@ -155,9 +156,11 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Nearest within a radius
     #======================================================
-    method nearest-within-ball(@point, Numeric $r) {
-        self.nearest-within-ball-rec(%!tree, @point, $r, 0);
+    method nearest-within-ball(@point, Numeric $r, Bool :v(:$values) = True) {
+        my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
+        return $values ?? @res.map(*<point>.value) !! @res;
     }
+
     method nearest-within-ball-rec(%node, @point, $r, $depth) {
         return [] unless %node;
         my $axis = $depth % @point.elems;
