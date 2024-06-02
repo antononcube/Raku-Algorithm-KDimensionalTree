@@ -118,7 +118,12 @@ class Algorithm::KDimensionalTree
     #======================================================
     # K-nearest
     #======================================================
-    method k-nearest(@point, UInt $k = 1, Bool :v(:$values) = True) {
+    # The check where * !~~ Iterable:D is most like redundant.
+    multi method k-nearest($point where * !~~ Iterable:D, UInt $k = 1, Bool :v(:$values) = True) {
+        # Should it be checked that @!points.head.elems == 1 ?
+        return self.k-nearest([$point,], $k, :$values);
+    }
+    multi method k-nearest(@point, UInt $k = 1, Bool :v(:$values) = True) {
         my @res = self.k-nearest-rec(%!tree, @point, $k, 0);
         return $values ?? @res.map(*<point>.value) !! @res;
     }
@@ -159,7 +164,11 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Nearest within a radius
     #======================================================
-    method nearest-within-ball(@point, Numeric $r, Bool :v(:$values) = True) {
+    multi method nearest-within-ball($point where * !~~ Iterable:D, Numeric $r, Bool :v(:$values) = True) {
+        # Should it be checked that @!points.head.elems == 1 ?
+        return self.nearest-within-ball([$point, ], $r, :$values);
+    }
+    multi method nearest-within-ball(@point, Numeric $r, Bool :v(:$values) = True) {
         my @res = self.nearest-within-ball-rec(%!tree, @point, $r, 0);
         return $values ?? @res.map(*<point>.value) !! @res;
     }
