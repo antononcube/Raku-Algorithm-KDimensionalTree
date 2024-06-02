@@ -7,6 +7,26 @@ Raku package with implementations of the [K-Dimensional Tree (K-D Tree) algorith
 which provides Raku bindings to a C-implementation of the K-D Tree algorithm.
 (A primary motivation for making this package, "Algorithm::KDimensionalTree", was to have a pure-Raku implementation.)
 
+**Remark:** The versions "ver<0.1.0+>" with the API "api<1>" of this package are better utilized via the 
+package ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest).
+
+Compared to the simple scanning algorithm this implementation of the K-D Tree algorithm is often 2÷15 times faster
+for randomly generated low dimensional data. (Say. less than 6D.) 
+It can be 200+ times faster for "real life" data, like, Geo-locations of USA cities.
+
+### Features
+
+- Finds both top-k Nearest Neighbors (NNs).
+  - See the method `k-nearest`.
+- Finds NNs within a ball with a given radius.
+  - See the method `nearest-within-ball`.
+- Can return indexes and distances for the found NNs.
+  - The result shape is controlled with the adverb `:values`.
+- Works with arrays of numbers, arrays of arrays of numbers, and arrays of pairs.
+- Utilizes distance functions from ["Math::DistanceFunctions"](https://github.com/antononcube/Raku-Math-DistanceFunctions).
+  - Which can be specified by their string names, like, "bray-curtis" or "cosine-distance".
+- Allows custom distance functions to be used.
+
 ------
 
 ## Installation
@@ -87,7 +107,7 @@ height => 20);
 
 ## TODO
 
-- [X] DONE Implementation
+- [ ] TODO Implementation
   - [X] DONE Using distance functions from an "universal" package
     - E.g. "Math::DistanceFunctions"
   - [X] DONE Using distance functions other than Euclidean distance
@@ -99,13 +119,17 @@ height => 20);
     - [X] DONE Combinations of those
     - This is implemented by should be removed.
       - There is another package -- ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest) -- 
-        that to handle *all* nearest neighbors finders. 
+        that handles *all* nearest neighbors finders. 
       - Version "0.1.0 with "api<1>" is without the `.nearest` method.
   - [X] DONE Having an umbrella function `nearest`
     - Instead of creating a KDTree object etc.
     - This might require making a functor `nearest-function`
     - This is better done in a different package
       - See ["Math::Nearest"](https://github.com/antononcube/Raku-Math-Nearest)
+  - [ ] TODO Make the nearest methods work with strings
+    - For example, using Hamming distance over a collection of words.
+    - Requires using the distance function as a comparator for the splitting hyperplanes.
+    - This means, any objects can be used as long as they provide a distance function.
 - [X] DONE Extensive correctness tests
   - Derived with Mathematica / WL (see the resources)
 - [ ] TODO Documentation
@@ -119,8 +143,12 @@ height => 20);
 
 ## References
 
-[AAp1] Anton Antonov, [Data::TypeSystem Raku package](https://github.com/antononcube/Raku-Data-TypeSystem), (2023), [GitHub/antononcube](https://github.com/antononcube).
+[AAp1] Anton Antonov, [Math::DistanceFunctions Raku package](https://github.com/antononcube/Raku-Math-DistanceFunctions), (2024), [GitHub/antononcube](https://github.com/antononcube).
 
-[AAp2] Anton Antonov, [Text::Plot Raku package](https://github.com/antononcube/Raku-Text-Plot), (2022), [GitHub/antononcube](https://github.com/antononcube).
+[AAp2] Anton Antonov, [Math::Nearest Raku package](https://github.com/antononcube/Raku-Math-Nearest), (2024), [GitHub/antononcube](https://github.com/antononcube).
+
+[AAp3] Anton Antonov, [Data::TypeSystem Raku package](https://github.com/antononcube/Raku-Data-TypeSystem), (2023), [GitHub/antononcube](https://github.com/antononcube).
+
+[AAp4] Anton Antonov, [Text::Plot Raku package](https://github.com/antononcube/Raku-Text-Plot), (2022), [GitHub/antononcube](https://github.com/antononcube).
 
 [ITp1] Itsuki Toyota, [Algorithm::KdTree Raku package](https://github.com/titsuki/p6-Algorithm-KdTree), (2016-2024), [GitHub/titsuki](https://github.com/titsuki).
