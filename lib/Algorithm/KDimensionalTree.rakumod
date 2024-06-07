@@ -8,6 +8,7 @@ class Algorithm::KDimensionalTree
     has @.points;
     has %.tree;
     has $.distance-function;
+    has $!distance-function-orig;
     has @.labels;
 
     #======================================================
@@ -43,8 +44,16 @@ class Algorithm::KDimensionalTree
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
             @!points = @!points>>.value.pairs;
+        } elsif @!points.all ~~ Str:D {
+
+            @!points = @!points.map({[$_, ]}).pairs;
+
+            # Assuming we are given a string distance function
+            $!distance-function-orig = $!distance-function;
+            $!distance-function = -> @a, @b { $!distance-function-orig(@a.head, @b.head) };
+
         } elsif @!points.all !~~ Iterable:D {
-                @!points = @!points.map({[$_, ]}).pairs;
+            @!points = @!points.map({[$_, ]}).pairs;
         } else {
             die "The points argument is expected to be an array of numbers, an array of arrays, or an array of pairs.";
         }
@@ -133,10 +142,13 @@ class Algorithm::KDimensionalTree
         my $axis = $depth % @point.elems;
 
         my (%next, %other);
-        if @point[$axis] < %node<point>.value[$axis] {
-            %next = %node<left>; %other = %node<right>;
-        } else {
-            %next = %node<right>; %other = %node<left>;
+        given @point[$axis] cmp %node<point>.value[$axis] {
+            when Less {
+                %next = %node<left>; %other = %node<right>;
+            }
+            default {
+                %next = %node<right>; %other = %node<left>;
+            }
         }
 
         # Recursively search
@@ -181,10 +193,13 @@ class Algorithm::KDimensionalTree
         my %inside = $dist ≤ $r ?? { point => %node<point>, distance => $dist } !! Empty;
 
         my (%next, %other);
-        if @point[$axis] < %node<point>.value[$axis] {
-            %next = %node<left>; %other = %node<right>;
-        } else {
-            %next = %node<right>; %other = %node<left>;
+        given @point[$axis] cmp %node<point>.value[$axis] {
+            when Less {
+                %next = %node<left>; %other = %node<right>;
+            }
+            default {
+                %next = %node<right>; %other = %node<left>;
+            }
         }
 
         my @neighbors = self.nearest-within-ball-rec(%next, @point, $r, $depth + 1);
