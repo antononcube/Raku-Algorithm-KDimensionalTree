@@ -1,7 +1,7 @@
 {
   "name": "Algorithm::KDimensionalTree",
   "description": "K-dimensional Tree (K-d tree) algorithm implementations.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "Anton Antonov"
   ],
