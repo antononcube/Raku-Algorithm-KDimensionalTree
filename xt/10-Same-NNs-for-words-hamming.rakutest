@@ -1,0 +1,23 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+use Algorithm::KDimensionalTree;
+
+my $k = 4;
+my @words = (('a'..'k').pick($k).join xx 30).unique;
+say @words;
+
+my $distance-function = 'hamming-distance';
+my $nKDTree = Algorithm::KDimensionalTree.new(@words, :$distance-function);
+
+## 1
+# Sometimes passes, sometimes fails.
+my $word1 = @words.head;
+my @scanRes1 = @words.sort({ $k - ($_.comb >>eq<< $word1.comb).sum }).head(3);
+say (:$word1);
+say (:@scanRes1);
+is $nKDTree.k-nearest($word1, 3), @scanRes1;
+
+
+done-testing;
