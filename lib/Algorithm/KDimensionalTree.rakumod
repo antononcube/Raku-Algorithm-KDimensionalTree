@@ -52,6 +52,11 @@ class Algorithm::KDimensionalTree
             $!distance-function-orig = $!distance-function;
             $!distance-function = -> @a, @b { $!distance-function-orig(@a.head, @b.head) };
 
+            # This "brilliant" idea has to be proven.
+            # It does not seem to work for Hamming Distance and Levenshtein Distance.
+            # For Hamming Distance it might be beneficial to use numeric representation of the letters.
+            # Which means that under the hood some mapping and re-mapping has to happen.
+
         } elsif @!points.all !~~ Iterable:D {
             @!points = @!points.map({[$_, ]}).pairs;
         } else {
