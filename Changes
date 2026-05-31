@@ -1,0 +1,5 @@
+Changes of the Raku package "Algorithm::KDimensionalTree".
+
+2026-05-30 0.1.2
+    - Allowing the points to be of CArray type.
+        - I.e., NativeCall distance function implementations can be used.
