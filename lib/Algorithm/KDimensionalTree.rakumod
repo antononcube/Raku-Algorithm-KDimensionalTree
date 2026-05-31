@@ -2,6 +2,7 @@ use v6.d;
 
 use Math::DistanceFunctions;
 use Math::DistanceFunctionish;
+use NativeCall;
 
 class Algorithm::KDimensionalTree
         does Math::DistanceFunctionish {
@@ -39,7 +40,7 @@ class Algorithm::KDimensionalTree
 
         # Process points
         # If an array of arrays make it an array of pairs
-        if @!points.all ~~ Iterable:D {
+        if @!points.all ~~ (Iterable:D | CArray:D) {
             @!points = @!points.pairs;
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
@@ -57,7 +58,7 @@ class Algorithm::KDimensionalTree
             # For Hamming Distance it might be beneficial to use numeric representation of the letters.
             # Which means that under the hood some mapping and re-mapping has to happen.
 
-        } elsif @!points.all !~~ Iterable:D {
+        } elsif @!points.all !~~ (Iterable:D | CArray:D) {
             @!points = @!points.map({[$_, ]}).pairs;
         } else {
             die "The points argument is expected to be an array of numbers, an array of arrays, or an array of pairs.";
@@ -133,7 +134,7 @@ class Algorithm::KDimensionalTree
     # K-nearest
     #======================================================
     # The check where * !~~ Iterable:D is most like redundant.
-    multi method k-nearest($point where * !~~ Iterable:D, UInt $k = 1, Bool :v(:$values) = True) {
+    multi method k-nearest($point where * !~~ (Iterable:D | CArray:D), UInt $k = 1, Bool :v(:$values) = True) {
         # Should it be checked that @!points.head.elems == 1 ?
         return self.k-nearest([$point,], $k, :$values);
     }
@@ -181,7 +182,7 @@ class Algorithm::KDimensionalTree
     #======================================================
     # Nearest within a radius
     #======================================================
-    multi method nearest-within-ball($point where * !~~ Iterable:D, Numeric $r, Bool :v(:$values) = True) {
+    multi method nearest-within-ball($point where * !~~ (Iterable:D | CArray:D), Numeric $r, Bool :v(:$values) = True) {
         # Should it be checked that @!points.head.elems == 1 ?
         return self.nearest-within-ball([$point, ], $r, :$values);
     }
