@@ -1,31 +1,30 @@
 {
-  "name": "Algorithm::KDimensionalTree",
-  "description": "K-dimensional Tree (K-d tree) algorithm implementations.",
-  "version": "0.1.1",
-  "authors": [
-    "Anton Antonov"
-  ],
-  "auth": "zef:antononcube",
-  "depends": [
-    "Math::DistanceFunctions:ver<0.1.1+>"
-  ],
-  "build-depends": [],
-  "test-depends": [],
-  "provides": {
-    "Algorithm::KDimensionalTree": "lib/Algorithm/KDimensionalTree.rakumod"
-  },
-  "resources": [
-    "KDTreeTest.json",
-    "DeriveTestData.wl"
-  ],
-  "license": "Artistic-2.0",
-  "tags": [
-    "k-d tree",
-    "k-dimensional tree",
-    "spatial search",
-    "nearest"
-  ],
-  "api": "1",
-  "source-url": "https://github.com/antononcube/Raku-Algorithm-KDTree.git",
-  "raku": "6.d"
+    "name": "Algorithm::KDimensionalTree",
+    "description": "K-dimensional Tree (K-d tree) algorithm implementations.",
+    "version": "0.1.2",
+    "raku": "6.d",
+    "authors": [
+        "Anton Antonov"
+    ],
+    "auth": "zef:antononcube",
+    "depends": [
+        "Math::DistanceFunctions:ver<0.1.4+>"
+    ],
+    "build-depends": [],
+    "provides": {
+        "Algorithm::KDimensionalTree": "lib/Algorithm/KDimensionalTree.rakumod"
+    },
+    "resources": [
+        "KDTreeTest.json",
+        "DeriveTestData.wl"
+    ],
+    "license": "Artistic-2.0",
+    "tags": [
+        "k-d tree",
+        "k-dimensional tree",
+        "spatial search",
+        "nearest"
+    ],
+    "api": "1",
+    "source-url": "https://github.com/antononcube/Raku-Algorithm-KDimensionalTree.git"
 }
